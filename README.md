@@ -1,5 +1,5 @@
 
-this is an one stop Transaction, Event, and User real-time engine designed to help companies detect money laundering, service abuse or fraud behavior.
+This is an one stop Transaction, Event, and User real-time engine designed to help companies detect money laundering, service abuse or fraud behavior.
 
 We provide an easy-to-use rule builder that can leverage any type of data, an engine capable of running checks in batch or in real-time, and a case manager to improve operational efficiency.
 
