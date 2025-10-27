@@ -7,15 +7,7 @@ Marble is beneficial for payment service providers (PSPs), banking-as-a-service 
 
 These decisions can trigger events in your systems, introduce friction, or restrict operations in real-time. They can also be investigated within Marble using our case manager or in your own system by utilizing our API.
 
-Marble is developed with compliance requirements in mind, ensuring that everything is versioned and auditable without any time limitations.
-
-
-The Elastic Licence V2 grants you a non-exclusive, royalty-free, worldwide, non-sublicensable, non-transferable license to use, copy, distribute, make available, and prepare derivative works of the software, subject to the limitations and conditions below.<br><br>
-**1) You may not provide the software to third parties as a hosted or managed service, where the service provides users with access to any substantial set of the features or functionality of the software.**<br><br>
-2) You may not move, change, disable, or circumvent the license key functionality in the software, and you may not remove or obscure any functionality in the software that is protected by the license key.<br><br>
-3) You may not alter, remove, or obscure any licensing, copyright, or other notices of the licensor in the software. Any use of the licensor’s trademarks is subject to applicable law.<br><br>
-
-*See full licence for details*<br><br>
+This is developed with compliance requirements in mind, ensuring that everything is versioned and auditable without any time limitations.
 
 ### **✨ Feature Comparision : Open-source vs Enterprise**
 
@@ -71,13 +63,13 @@ The Elastic Licence V2 grants you a non-exclusive, royalty-free, worldwide, non-
 
 #### About Enterprise features
 
-The core of the decision engine is available in open-source, but some advanced features are only accessible with a lincense. As long as you are running Marble locally with a test setup (using the Firebase auth emulator for end user authentication), you will see all the features, but you will be restricted if you authenticate with a real Firebase auth app.
+The core of the decision engine is available in open-source, but some advanced features are only accessible with a lincense. As long as you are running it locally with a test setup (using the Firebase auth emulator for end user authentication), you will see all the features, but you will be restricted if you authenticate with a real Firebase auth app.
 
 ### 💭 **Example Use Cases**
 
 ---
 
-Marble's incredible flexibility is due to its fully open data model. Here are some applications already in use with Marble:
+Our incredible flexibility is due to its fully open data model. Here are some applications already in use :
 
 - Transaction monitoring for financial institutions (AML & fraud), supporting every type of payment scheme (including the exotic ones: Marble handles any type of data).
 - User/account monitoring.
@@ -89,57 +81,3 @@ Marble's incredible flexibility is due to its fully open data model. Here are so
 
 Feel free to try other use cases and let us know! We'd love to hear from you.
 
-### 🕵 **How to use Marble**
-
----
-
-You will find a functional documentation of how to use Marble [here](https://docs.checkmarble.com/docs/what-is-marble-copy), and the documentation of our public API [here](https://docs.checkmarble.com/reference/intro-getting-started).
-
-### 🔧 **How to Install Marble**
-
----
-
-Want to deploy Marble on your environement? Check our ressources [here](https://github.com/checkmarble/marble/tree/main/installation)
-
-### 🐧 **Why Open Source?**
-
----
-
-**We need your ⭐️**
-
-Risk management is challenging for many companies. Currently, you can either:
-
-- Build your own risk infrastructure:
-  - It’s a never-ending task.
-  - Building from scratch takes months and often falls short of end-user expectations.
-  - Essential elements like versioning and audit trails are often overlooked.
-  - Risk teams need updates urgently, but development teams need to scope and prioritize first.
-- Or, spend a significant amount to buy a service where:
-  - Setup costs and time are substantial.
-  - You might lack full control over the applied rules.
-  - The scoring algorithm is “proprietary,” meaning you can’t explain it.
-  - There’s limited flexibility to connect your data and product specifics, such as limited payment schemes covered.
-  - Contract renewal is burdensome.
-
-Marble offers a clear third option:
-
-- Start Strong: Benefit from one of the best engines on the market for free. There’s no excuse for not having top-notch monitoring from day one.
-- Privacy: Your data remains yours, always.
-- Total Transparency: The code is open; you can see everything within the engine. You KNOW why an alert is raised every time; you don’t have to guess.
-- Evolutivity: Use any data you want and evolve the model instantly. Adding a new product, even with a never-before-seen payment scheme, takes minutes.
-- Community Driven: Contribute based on your needs: need a custom calculation? A third-party integration? It’s just a commit away.
-  <br><br>
-
-### :sparkling_heart: **Contributing**
-
----
-
-We want to create an open environment and appreciate all types of contributions that benefits all current and future users. Here are some ways you can contribute:
-
-- Leave us a ⭐️
-- Give us feedback in our Slack community
-- Help with bugs and features on our Issues page
-- Submit a feature request or bug report
-  <br><br>
-
-Made with :heart: in :fr: by Marble
