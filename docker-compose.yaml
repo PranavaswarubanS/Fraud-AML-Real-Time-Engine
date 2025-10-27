@@ -1,0 +1,203 @@
+name: marble
+
+x-backend-image-version: &backend-image-version
+  image: europe-west1-docker.pkg.dev/marble-infra/marble/marble-backend:v0.53.3
+x-frontend-image-version: &frontend-image-version
+  image: europe-west1-docker.pkg.dev/marble-infra/marble/marble-frontend:v0.53.1
+
+x-shared-environment: &shared-env
+  ENV: ${ENV}
+  SENTRY_DSN: ${SENTRY_DSN}
+  DISABLE_SEGMENT: ${DISABLE_SEGMENT:-false}
+x-backend-environment: &backend-env
+  LICENSE_KEY: ${LICENSE_KEY}
+
+  PORT: ${API_PORT:-8080}
+  MARBLE_APP_URL: ${MARBLE_APP_URL}
+
+  PG_HOSTNAME: ${PG_HOSTNAME}
+  PG_PORT: ${PG_PORT}
+  PG_USER: ${PG_USER}
+  PG_PASSWORD: ${PG_PASSWORD}
+  PG_SSL_MODE: ${PG_SSL_MODE}
+  PG_CONNECTION_STRING: ${PG_CONNECTION_STRING}
+
+  AUTHENTICATION_JWT_SIGNING_KEY: ${AUTHENTICATION_JWT_SIGNING_KEY}
+
+  INGESTION_BUCKET_URL: ${INGESTION_BUCKET_URL}
+  CASE_MANAGER_BUCKET_URL: ${CASE_MANAGER_BUCKET_URL}
+
+  GOOGLE_CLOUD_PROJECT: ${GOOGLE_CLOUD_PROJECT}
+  GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS}
+
+  FIREBASE_API_KEY: ${FIREBASE_API_KEY}
+  FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID}
+
+  REQUEST_LOGGING_LEVEL: ${REQUEST_LOGGING_LEVEL}
+  LOGGING_FORMAT: ${LOGGING_FORMAT}
+
+  CREATE_ORG_NAME: ${CREATE_ORG_NAME}
+  CREATE_ORG_ADMIN_EMAIL: ${CREATE_ORG_ADMIN_EMAIL}
+
+  METABASE_SITE_URL: ${METABASE_SITE_URL}
+  METABASE_JWT_SIGNING_KEY: ${METABASE_JWT_SIGNING_KEY}
+  METABASE_GLOBAL_DASHBOARD_ID: ${METABASE_GLOBAL_DASHBOARD_ID}
+
+  CONVOY_API_URL: ${CONVOY_API_URL}
+  CONVOY_API_KEY: ${CONVOY_API_KEY}
+  CONVOY_PROJECT_ID: ${CONVOY_PROJECT_ID}
+
+  OPENSANCTIONS_API_HOST: ${OPENSANCTIONS_API_HOST}
+  OPENSANCTIONS_AUTH_METHOD: ${OPENSANCTIONS_AUTH_METHOD}
+  OPENSANCTIONS_API_KEY: ${OPENSANCTIONS_API_KEY}
+
+  OFFLOADING_ENABLED: ${OFFLOADING_ENABLED}
+  OFFLOADING_BUCKET_URL: ${OFFLOADING_BUCKET_URL}
+  OFFLOADING_JOB_INTERVAL: ${OFFLOADING_JOB_INTERVAL}
+  OFFLOADING_BEFORE: ${OFFLOADING_BEFORE}
+  OFFLOADING_BATCH_SIZE: ${OFFLOADING_BATCH_SIZE}
+  OFFLOADING_SAVE_POINTS: ${OFFLOADING_SAVE_POINTS}
+  OFFLOADING_WRITES_PER_SEC: ${OFFLOADING_WRITES_PER_SEC}
+x-frontend-environment: &frontend-env
+  PORT: ${APP_PORT:-8080}
+
+  SESSION_SECRET: ${SESSION_SECRET}
+  SESSION_MAX_AGE: ${SESSION_MAX_AGE}
+
+  MARBLE_API_URL: ${MARBLE_API_URL}
+
+services:
+  # NB: the docker compose file includes a postgres image for the sake of completeness, but we strongly
+  # suggest using a production-grade database to run Marble in a production environment
+  db:
+    container_name: marble-postgres
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${PG_PASSWORD:-changeme}
+      POSTGRES_DB: marble
+      PGDATA: /data/postgres
+      PGPORT: ${PG_PORT:-5432}
+    ports:
+      - ${PG_PORT:-5432}:${PG_PORT:-5432}
+    volumes:
+      - marble-db:/data/postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 2s
+      timeout: 1s
+      retries: 5
+  api: &backend
+    <<: *backend-image-version
+    container_name: marble-api
+    platform: linux/amd64
+    restart: always
+    depends_on:
+      - db
+      - yente
+    entrypoint: ["./app", "--server", "--migrations"]
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:${API_PORT:-8080}/liveness || exit 1
+      interval: 10s
+      timeout: 60s
+      retries: 1
+      start_period: 30s
+    ports:
+      - ${HOST_API_PORT:-8080}:${API_PORT:-8080}
+    volumes:
+      # adapt this line so that the left-hand side is the address of a folder containing:
+      # - the service account key
+      # - optionally the JWT signing RSA key in .pem format
+      - ./local_shared:/shared
+    environment:
+      <<: [*shared-env, *backend-env]
+  cron:
+    <<: *backend
+    container_name: marble-api-cron
+    depends_on:
+      - api
+    entrypoint: ["./app", "--worker"]
+    healthcheck:
+      disable: true
+    ports: []
+  app:
+    <<: *frontend-image-version
+    container_name: marble-app
+    platform: linux/amd64
+    restart: always
+    depends_on:
+      - api
+    healthcheck:
+      test:
+        - CMD
+        - /nodejs/bin/node
+        - --input-type=module
+        - -e
+        - "process.exit((await fetch('http://localhost:${APP_PORT:-8080}/healthcheck')).status == 200 ? 0 : 1)"
+      interval: 10s
+      timeout: 60s
+      retries: 1
+      start_period: 30s
+    ports:
+      - ${HOST_APP_PORT:-3000}:${APP_PORT:-8080}
+    environment:
+      <<: [*shared-env, *frontend-env]
+
+  # NB: the docker compose file includes an elasticsearch image for the sake of completeness, but we strongly
+  # suggest using a production-grade instance to run Marble in a production environment
+  elasticsearch:
+    container_name: marble-es
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.14.3
+    ports:
+      - ${ES_PORT:-9200}:${ES_PORT:-9200}
+    environment:
+      - node.name=es
+      - cluster.name=marble-es
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - marble-es:/usr/share/elasticsearch/data
+  yente:
+    container_name: marble-yente
+    image: ghcr.io/opensanctions/yente:4.5.1
+    depends_on:
+      - elasticsearch
+    command:
+      [
+        "uvicorn",
+        "--host=0.0.0.0",
+        "--workers=${YENTE_API_WORKERS:-4}",
+        "yente.asgi:app",
+      ]
+    ports:
+      - ${YENTE_PORT:-8000}:${YENTE_PORT:-8000}
+    environment:
+      YENTE_INDEX_TYPE: elasticsearch
+      YENTE_INDEX_URL: ${YENTE_ELASTICSEARCH_HOST:-http://marble-es:9200}
+      YENTE_QUERY_CONCURRENCY: ${YENTE_QUERY_CONCURRENCY:-50}
+      YENTE_UPDATE_TOKEN: ""
+      YENTE_AUTO_REINDEX: false
+  yente-indexer:
+    container_name: marble-yente-indexer
+    image: ghcr.io/opensanctions/yente:4.5.1
+    depends_on:
+      - elasticsearch
+    command: ["yente", "reindex"]
+    environment:
+      YENTE_INDEX_TYPE: elasticsearch
+      YENTE_INDEX_URL: ${YENTE_ELASTICSEARCH_HOST:-http://marble-es:9200}
+      YENTE_QUERY_CONCURRENCY: "50"
+      YENTE_UPDATE_TOKEN: ""
+
+volumes:
+  marble-db:
+    driver: local
+  marble-es:
+    driver: local
