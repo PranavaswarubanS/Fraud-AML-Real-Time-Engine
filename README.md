@@ -1,5 +1,5 @@
 
-Marble is an open-source Transaction, Event, and User real-time engine designed to help companies detect money laundering, service abuse or fraud behavior.
+this is an one stop Transaction, Event, and User real-time engine designed to help companies detect money laundering, service abuse or fraud behavior.
 
 We provide an easy-to-use rule builder that can leverage any type of data, an engine capable of running checks in batch or in real-time, and a case manager to improve operational efficiency.
 
@@ -9,26 +9,6 @@ These decisions can trigger events in your systems, introduce friction, or restr
 
 Marble is developed with compliance requirements in mind, ensuring that everything is versioned and auditable without any time limitations.
 
-See it in action: [Watch a demo](https://www.checkmarble.com/watch-a-demo)
-
-**Open-source, open architecture:**
-
-- Composable: Connect Marble to any of your internal systems or tools, such as transaction databases, KYC solutions, or 3rd party data providers.
-- Pricing: We offer a free open source self-hosted option and a licensed option with Enterprise features which can be deployed Self-hosted or SaaS.
-- Privacy: With the Self-hosted option, your data never has to leave your infrastructure.
-
-NB: We do not provide KYC services. There are plenty of awesome players in the market that you can connect with Marble :)
-<br>
-<img width="600" alt="Rule example" src="https://github.com/user-attachments/assets/498ce248-6f85-40a0-b1dc-ea6efe7425f9" class="center">
-<br><br>
-
-
-
-### **🔖 Open Source License**
-
----
-
-[Elastic License 2.0 (ELv2)](./LICENSE)
 
 The Elastic Licence V2 grants you a non-exclusive, royalty-free, worldwide, non-sublicensable, non-transferable license to use, copy, distribute, make available, and prepare derivative works of the software, subject to the limitations and conditions below.<br><br>
 **1) You may not provide the software to third parties as a hosted or managed service, where the service provides users with access to any substantial set of the features or functionality of the software.**<br><br>
