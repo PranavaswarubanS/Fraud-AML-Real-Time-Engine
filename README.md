@@ -1,5 +1,3 @@
-[![Better Stack Badge](https://uptime.betterstack.com/status-badges/v1/monitor/1ybu2.svg)](https://marble.betteruptime.com/)
-![GITHUB](https://github.com/user-attachments/assets/f8408864-d603-4ecd-a066-0da96ab9b8b9)
 
 Marble is an open-source Transaction, Event, and User real-time engine designed to help companies detect money laundering, service abuse or fraud behavior.
 
@@ -24,10 +22,6 @@ NB: We do not provide KYC services. There are plenty of awesome players in the m
 <img width="600" alt="Rule example" src="https://github.com/user-attachments/assets/498ce248-6f85-40a0-b1dc-ea6efe7425f9" class="center">
 <br><br>
 
-
-### 👋 We are happy to help !
-
-Reach out to us on our website, on our [slack](https://join.slack.com/t/marble-communitysiege/shared_invite/zt-2b8iree6b-ZLwCiafKV9rR0O6FO7Jqcw), or ask for a demo [here](https://calendly.com/arnaudschwartz/discover-marble-1).
 
 
 ### **🔖 Open Source License**
